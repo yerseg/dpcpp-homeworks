@@ -1,5 +1,5 @@
-#include "iostream"
-#include "functional"
+#include <functional>
+#include <iostream>
 
 class Button {
 public:
@@ -14,7 +14,8 @@ public:
         std::cout << "Windows Button" << std::endl;
     }
 
-    void onClick(std::function<void()>) const noexcept override {}
+    void onClick(std::function<void()>) const noexcept override {
+    }
 };
 
 class MacOSButton : public Button {
@@ -23,16 +24,18 @@ public:
         std::cout << "MacOS Button" << std::endl;
     }
 
-    void onClick(std::function<void()>) const noexcept override {}
+    void onClick(std::function<void()>) const noexcept override {
+    }
 };
 
 class TextBox {
 public:
     virtual void render() const noexcept = 0;
 
-    void setText(const std::string &text) noexcept {
+    void setText(const std::string& text) noexcept {
         this->text = text;
     };
+
     std::string text;
 };
 
@@ -50,40 +53,39 @@ public:
     }
 };
 
-
 class AbstractModalDialogFactory {
 public:
+    virtual Button* createButton() const noexcept = 0;
 
-    virtual Button *createButton() const noexcept = 0;
-
-    virtual TextBox *createTextBox() const noexcept = 0;
+    virtual TextBox* createTextBox() const noexcept = 0;
 };
 
 class WindowsModalDialogFactory : public AbstractModalDialogFactory {
 public:
-    Button *createButton() const noexcept override {
+    Button* createButton() const noexcept override {
         return new WinButton();
     }
 
-    TextBox *createTextBox() const noexcept override {
+    TextBox* createTextBox() const noexcept override {
         return new WinText();
     }
 };
 
 class MacOSModalDialogFactory : public AbstractModalDialogFactory {
 public:
-    Button *createButton() const noexcept override {
+    Button* createButton() const noexcept override {
         return new MacOSButton();
     }
 
-    TextBox *createTextBox() const noexcept override {
+    TextBox* createTextBox() const noexcept override {
         return new MacOSText();
     }
 };
 
 class Application {
 public:
-    explicit Application(AbstractModalDialogFactory *factory) : factory_(factory) {
+    explicit Application(AbstractModalDialogFactory* factory)
+        : factory_(factory) {
         render();
     }
     void render() const noexcept {
@@ -95,10 +97,10 @@ public:
     }
 
 private:
-    AbstractModalDialogFactory *factory_;
+    AbstractModalDialogFactory* factory_;
 };
 
-int main() {
+int abstract_factory_main() {
     std::string platform;
     std::cout << "Enter target platform:" << std::endl;
     std::cin >> platform;

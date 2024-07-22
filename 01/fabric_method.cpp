@@ -1,5 +1,5 @@
-#include "iostream"
-#include "functional"
+#include <functional>
+#include <iostream>
 
 class Button {
 public:
@@ -14,7 +14,8 @@ public:
         std::cout << "Windows Button";
     }
 
-    void onClick(std::function<void()>) const noexcept override {}
+    void onClick(std::function<void()>) const noexcept override {
+    }
 };
 
 class MacOSButton : public Button {
@@ -23,35 +24,36 @@ public:
         std::cout << "MacOS Button";
     }
 
-    void onClick(std::function<void()>) const noexcept override {}
+    void onClick(std::function<void()>) const noexcept override {
+    }
 };
 
 class ModalDialog {
 public:
     void createWindow() const noexcept {
-        Button *b = createButton();
+        Button* b = createButton();
         b->render();
-        b->onClick([](){});
+        b->onClick([]() {});
     }
 
-    virtual Button *createButton() const noexcept = 0;
+    virtual Button* createButton() const noexcept = 0;
 };
 
 class WindowsModalDialog : public ModalDialog {
 public:
-    Button *createButton() const noexcept override {
+    Button* createButton() const noexcept override {
         return new WinButton();
     }
 };
 
 class MacOSModalDialog : public ModalDialog {
 public:
-    Button *createButton() const noexcept override {
+    Button* createButton() const noexcept override {
         return new MacOSButton();
     }
 };
 
-int main() {
+int fabric_method_main() {
     std::string platform;
     std::cout << "Enter target platform:" << std::endl;
     std::cin >> platform;

@@ -1,11 +1,10 @@
-#include "thread"
-#include "iostream"
+#include <iostream>
+#include <thread>
 
 class Singleton {
 public:
-
     // Метод для получения экземпляра
-    static Singleton* GetInstance(int value)  {
+    static Singleton* GetInstance(int value) {
         std::lock_guard<std::mutex> lock(m_);
         if (instance_) {
             return instance_;
@@ -25,7 +24,9 @@ public:
 
 private:
     // Приватный конструктор
-    explicit Singleton(int value) : value_(value) {}
+    explicit Singleton(int value)
+        : value_(value) {
+    }
     int value_;
     // Статический указатель на единственный экземпляр
     static Singleton* instance_;
@@ -44,9 +45,10 @@ void worker2() {
     s->DoJob();
 }
 
-int main () {
+int singleton_main() {
     std::thread t1(worker1);
     std::thread t2(worker2);
     t1.join();
     t2.join();
+    return 0;
 }

@@ -1,7 +1,7 @@
-#include "map"
-#include "vector"
-#include "chrono"
-#include "iostream"
+#include <chrono>
+#include <iostream>
+#include <map>
+#include <vector>
 
 struct Event {
     std::string name;
@@ -17,7 +17,6 @@ struct Event {
     std::vector<std::string> route;
     std::map<std::string, std::string> meta;
 };
-
 
 class EventBuilder {
 public:
@@ -36,6 +35,7 @@ public:
         }
         return event;
     }
+
     EventBuilder& AddLevel(int level) noexcept {
         event.level = level;
         return *this;
@@ -45,10 +45,12 @@ public:
         event.meta[key] = value;
         return *this;
     }
+
     EventBuilder& AddRoutePoint(const std::string& point) {
         event.route.push_back(point);
         return *this;
     }
+
 private:
     Event event;
 };
@@ -56,14 +58,15 @@ private:
 void SendEvent(const Event& e) {
     std::cout << "Sending event " << e.name << " to " << e.target << " from " << e.source << std::endl;
     std::cout << "route is: \n";
-    for (const auto& point: e.route) {
+    for (const auto& point : e.route) {
         std::cout << point << "->";
     }
 }
 
-int main() {
+int builder_main() {
     EventBuilder builder("VeryImportantEvent");
     builder.AddLevel(3).AddMeta("key", "value");
     builder.AddRoutePoint("first").AddRoutePoint("second");
     SendEvent(builder.BuildEvent());
+    return 0;
 }
