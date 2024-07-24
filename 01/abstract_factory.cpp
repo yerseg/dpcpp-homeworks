@@ -1,5 +1,6 @@
 #include <functional>
 #include <iostream>
+#include <memory>
 
 class Button {
 public:
@@ -55,60 +56,63 @@ public:
 
 class AbstractModalDialogFactory {
 public:
-    virtual Button* createButton() const noexcept = 0;
+    virtual std::shared_ptr<Button> createButton() const noexcept = 0;
 
-    virtual TextBox* createTextBox() const noexcept = 0;
+    virtual std::shared_ptr<TextBox> createTextBox() const noexcept = 0;
 };
 
 class WindowsModalDialogFactory : public AbstractModalDialogFactory {
 public:
-    Button* createButton() const noexcept override {
-        return new WinButton();
+    std::shared_ptr<Button> createButton() const noexcept override {
+        return std::make_shared<WinButton>();
     }
 
-    TextBox* createTextBox() const noexcept override {
-        return new WinText();
+    std::shared_ptr<TextBox> createTextBox() const noexcept override {
+        return std::make_shared<WinText>();
     }
 };
 
 class MacOSModalDialogFactory : public AbstractModalDialogFactory {
 public:
-    Button* createButton() const noexcept override {
-        return new MacOSButton();
+    std::shared_ptr<Button> createButton() const noexcept override {
+        return std::make_shared<MacOSButton>();
     }
 
-    TextBox* createTextBox() const noexcept override {
-        return new MacOSText();
+    std::shared_ptr<TextBox> createTextBox() const noexcept override {
+        return std::make_shared<MacOSText>();
     }
 };
 
 class Application {
 public:
-    explicit Application(AbstractModalDialogFactory* factory)
-        : factory_(factory) {
+    explicit Application(std::shared_ptr<AbstractModalDialogFactory> factory)
+        : factory_(std::move(factory)) {
         render();
     }
     void render() const noexcept {
-        Button* b = factory_->createButton();
-        TextBox* t = factory_->createTextBox();
-        t->setText("Hello world");
-        b->render();
-        t->render();
+        std::shared_ptr<Button> button = factory_->createButton();
+        std::shared_ptr<TextBox> textBox = factory_->createTextBox();
+        textBox->setText("Hello world");
+        button->render();
+        textBox->render();
     }
 
 private:
-    AbstractModalDialogFactory* factory_;
+    std::shared_ptr<AbstractModalDialogFactory> factory_;
 };
 
 int abstract_factory_main() {
     std::string platform;
     std::cout << "Enter target platform:" << std::endl;
     std::cin >> platform;
-    AbstractModalDialogFactory* factory;
+    std::shared_ptr<AbstractModalDialogFactory> factory;
     if (platform == "win") {
-        factory = new WindowsModalDialogFactory();
+        factory = std::make_shared<WindowsModalDialogFactory>();
     } else if (platform == "macos") {
-        factory = new MacOSModalDialogFactory();
+        factory = std::make_shared<MacOSModalDialogFactory>();
+    } else {
+        std::cout << "Unknown platform" << std::endl;
+        return 1;
     }
     auto app = Application(factory);
     return 0;

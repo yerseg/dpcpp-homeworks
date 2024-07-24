@@ -1,15 +1,18 @@
 #include <iostream>
+#include <memory>
 #include <thread>
+
+namespace {
 
 class SimpleSingleton {
 public:
     // Метод для получения экземпляра
-    static SimpleSingleton* GetInstance(int value) {
+    static std::shared_ptr<SimpleSingleton> GetInstance(int value) {
         if (instance_) {
             return instance_;
-        } else {
-            instance_ = new SimpleSingleton(value);
         }
+
+        instance_ = std::shared_ptr<SimpleSingleton>(new SimpleSingleton(value));
         return instance_;
     }
 
@@ -28,20 +31,20 @@ private:
     }
     int value_;
     // Статический указатель на единственный экземпляр
-    static SimpleSingleton* instance_;
+    inline static std::shared_ptr<SimpleSingleton> instance_ = nullptr;
 };
 
-SimpleSingleton* SimpleSingleton::instance_ = nullptr;
-
 void worker1() {
-    SimpleSingleton* s = SimpleSingleton::GetInstance(42);
-    s->DoJob();
+    const auto singleton = SimpleSingleton::GetInstance(42);
+    singleton->DoJob();
 }
 
 void worker2() {
-    SimpleSingleton* s = SimpleSingleton::GetInstance(43);
-    s->DoJob();
+    const auto singleton = SimpleSingleton::GetInstance(43);
+    singleton->DoJob();
 }
+
+} // namespace
 
 int naive_singletone_main() {
     std::thread t1(worker1);

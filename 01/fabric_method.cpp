@@ -31,25 +31,25 @@ public:
 class ModalDialog {
 public:
     void createWindow() const noexcept {
-        Button* b = createButton();
-        b->render();
-        b->onClick([]() {});
+        std::shared_ptr<Button> button = createButton();
+        button->render();
+        button->onClick([]() {});
     }
 
-    virtual Button* createButton() const noexcept = 0;
+    virtual std::shared_ptr<Button> createButton() const noexcept = 0;
 };
 
 class WindowsModalDialog : public ModalDialog {
 public:
-    Button* createButton() const noexcept override {
-        return new WinButton();
+    std::shared_ptr<Button> createButton() const noexcept override {
+        return std::make_shared<WinButton>();
     }
 };
 
 class MacOSModalDialog : public ModalDialog {
 public:
-    Button* createButton() const noexcept override {
-        return new MacOSButton();
+    std::shared_ptr<Button> createButton() const noexcept override {
+        return std::make_shared<MacOSButton>();
     }
 };
 
@@ -61,6 +61,9 @@ int fabric_method_main() {
         WindowsModalDialog().createWindow();
     } else if (platform == "macos") {
         MacOSModalDialog().createWindow();
+    } else {
+        std::cout << "Unknown platform" << std::endl;
+        return 1;
     }
     return 0;
 }
