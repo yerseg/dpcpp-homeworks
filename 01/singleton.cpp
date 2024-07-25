@@ -45,7 +45,7 @@ void worker2() {
     s->DoJob();
 }
 
-int singleton_main() {
+int main() {
     std::thread t1(worker1);
     std::thread t2(worker2);
     t1.join();

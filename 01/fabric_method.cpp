@@ -53,7 +53,7 @@ public:
     }
 };
 
-int fabric_method_main() {
+int main() {
     std::string platform;
     std::cout << "Enter target platform:" << std::endl;
     std::cin >> platform;

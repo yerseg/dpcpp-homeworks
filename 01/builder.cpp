@@ -63,7 +63,7 @@ void SendEvent(const Event& e) {
     }
 }
 
-int builder_main() {
+int main() {
     EventBuilder builder("VeryImportantEvent");
     builder.AddLevel(3).AddMeta("key", "value");
     builder.AddRoutePoint("first").AddRoutePoint("second");

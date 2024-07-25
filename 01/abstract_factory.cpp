@@ -101,7 +101,7 @@ private:
     std::shared_ptr<AbstractModalDialogFactory> factory_;
 };
 
-int abstract_factory_main() {
+int main() {
     std::string platform;
     std::cout << "Enter target platform:" << std::endl;
     std::cin >> platform;
