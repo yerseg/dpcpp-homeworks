@@ -1,48 +1,63 @@
+#include <iostream>
 #include <map>
 #include <string>
-#include <iostream>
 
-class VeryHeavyDatabase {
+struct IDatabase {
+    virtual ~IDatabase() = default;
+
+    virtual std::string GetData(const std::string& key) const = 0;
+};
+
+class VeryHeavyDatabase : public IDatabase {
 public:
-    std::string GetData(const std::string& key) const noexcept {
+    std::string GetData(const std::string& key) const override {
         return "Very Big Data String: " + key;
     }
 };
 
-class CacheProxyDB : VeryHeavyDatabase {
+class CacheProxyDB : public IDatabase {
 public:
-    explicit CacheProxyDB (VeryHeavyDatabase* real_object) : real_db_(real_object) {}
-    std::string GetData(const std::string& key) noexcept {
-        if (cache_.find(key) == cache_.end()) {
-            std::cout << "Get from real object\n";
-            cache_[key] = real_db_->GetData(key);
+    explicit CacheProxyDB(std::shared_ptr<IDatabase> db)
+        : real_db_(std::move(db)) {
+    }
+
+    std::string GetData(const std::string& key) const override {
+        if (auto it = cache_.find(key); it != cache_.end()) {
+            std::cout << "Get from cache" << std::endl;
+            return it->second;
         } else {
-            std::cout << "Get from cache\n";
+            std::cout << "Get from real object" << std::endl;
+            return cache_.emplace(key, real_db_->GetData(key)).first->second;
         }
-        return cache_.at(key);
     }
 
 private:
-    std::map<std::string, std::string> cache_;
-    VeryHeavyDatabase* real_db_;
+    mutable std::map<std::string, std::string> cache_;
+    std::shared_ptr<IDatabase> real_db_;
 };
 
-class TestDB : VeryHeavyDatabase {
+class TestDB : public IDatabase {
 public:
-    explicit TestDB(VeryHeavyDatabase* real_object) : real_db_(real_object) {}
-    std::string GetData(const std::string& key) noexcept {
+    explicit TestDB(std::shared_ptr<IDatabase> db)
+        : real_db_(std::move(db)) {
+    }
+
+    std::string GetData(const std::string&) const override {
         return "test_data\n";
     }
+
 private:
-    VeryHeavyDatabase* real_db_;
+    std::shared_ptr<IDatabase> real_db_;
 };
 
 int main() {
-    auto real_db = VeryHeavyDatabase();
-    auto cached_db = CacheProxyDB(std::addressof(real_db));
-    auto test_db = TestDB(std::addressof(real_db));
-    std::cout << cached_db.GetData("key") << std::endl;
-    std::cout << cached_db.GetData("key") << std::endl;
-    std::cout << test_db.GetData("key") << std::endl;
+    std::shared_ptr<IDatabase> real_db = std::make_shared<VeryHeavyDatabase>();
+
+    auto cached_db = std::make_unique<CacheProxyDB>(real_db);
+    auto test_db = std::make_unique<TestDB>(real_db);
+
+    std::cout << cached_db->GetData("key") << std::endl;
+    std::cout << cached_db->GetData("key") << std::endl;
+    std::cout << test_db->GetData("key") << std::endl;
     return 0;
 }

@@ -58,7 +58,6 @@ BreakConstructorInitializersBeforeComma: false
 BreakInheritanceList: BeforeColon
 BreakStringLiterals: false
 ColumnLimit: 110
-CommentPragmas: '^ IWYU pragma:'
 CompactNamespaces: false
 ConstructorInitializerIndentWidth: 4
 ContinuationIndentWidth: 4
@@ -120,36 +119,6 @@ PointerAlignment: Left
 QualifierAlignment: Left
 ReferenceAlignment: Pointer
 RequiresClausePosition: OwnLine
-RawStringFormats:
-  - Language: Cpp
-    Delimiters:
-      - cc
-      - CC
-      - cpp
-      - Cpp
-      - CPP
-      - 'c++'
-      - 'C++'
-    CanonicalDelimiter: ''
-    BasedOnStyle: google
-  - Language: TextProto
-    Delimiters:
-      - pb
-      - PB
-      - proto
-      - PROTO
-    EnclosingFunctions:
-      - EqualsProto
-      - EquivToProto
-      - PARSE_PARTIAL_TEXT_PROTO
-      - PARSE_TEST_PROTO
-      - PARSE_TEXT_PROTO
-      - ParseTextOrDie
-      - ParseTextProtoOrDie
-      - ParseTestProto
-      - ParsePartialTestProto
-    CanonicalDelimiter: ''
-    BasedOnStyle:    google
 ReflowComments:  true
 SeparateDefinitionBlocks: Leave
 SortIncludes: true
@@ -181,8 +150,4 @@ Standard: c++20
 TabWidth: 8
 UseCRLF: false
 UseTab: Never
-WhitespaceSensitiveMacros:
-  - STRINGIZE
-  - PP_STRINGIZE
-  - BOOST_PP_STRINGIZE
 ...
